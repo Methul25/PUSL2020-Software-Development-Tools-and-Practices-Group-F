@@ -1,0 +1,143 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = "/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="min-h-[calc(100vh-56px)] grid grid-cols-1 lg:grid-cols-2">
+
+  @* Left — form *@
+  <div class="flex items-center justify-center bg-white px-6 py-12">
+    <div class="w-full max-w-md">
+
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-full bg-[#1A2E4A] flex items-center justify-center mx-auto mb-4 ring-4 ring-[#00A8A8]/30">
+          <i class="fas fa-eye-slash text-[#00A8A8] text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-extrabold text-[#1A2E4A]">BlindMatch PAS</h1>
+        <p class="text-xs tracking-widest text-[#00A8A8] font-semibold uppercase mt-1">Project Approval System</p>
+        <div class="w-10 h-0.5 bg-[#00A8A8] mx-auto mt-3"></div>
+      </div>
+
+      <h2 class="text-lg font-bold text-[#1A2E4A] mb-6 text-center">Create a student account</h2>
+
+      <div asp-validation-summary="ModelOnly" class="alert alert-error mb-4 text-sm py-2" role="alert"></div>
+
+      <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" novalidate class="space-y-4"
+            x-data="{ showPw: false, showCp: false }">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label asp-for="Input.FullName" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Full name</span></label>
+            <input asp-for="Input.FullName" class="input input-bordered w-full text-gray-900 placeholder:text-gray-400 focus:border-[#00A8A8] focus:outline-none"
+                   autocomplete="name" placeholder="Jane Doe" />
+            <span asp-validation-for="Input.FullName" class="text-error text-xs mt-1 block"></span>
+          </div>
+          <div class="form-control">
+            <label asp-for="Input.StudentId" class="label">
+              <span class="label-text font-semibold text-[#1A2E4A]">Student ID</span>
+              <span class="label-text-alt text-gray-400 text-xs">optional</span>
+            </label>
+            <input asp-for="Input.StudentId" class="input input-bordered w-full text-gray-900 placeholder:text-gray-400 focus:border-[#00A8A8] focus:outline-none"
+                   autocomplete="off" placeholder="2021/CS/001" />
+          </div>
+        </div>
+
+        <div class="form-control">
+          <label asp-for="Input.Email" class="label"><span class="label-text font-semibold text-[#1A2E4A]">University email</span></label>
+          <input asp-for="Input.Email" class="input input-bordered w-full text-gray-900 placeholder:text-gray-400 focus:border-[#00A8A8] focus:outline-none"
+                 autocomplete="username" placeholder="you@university.ac.lk" />
+          <span asp-validation-for="Input.Email" class="text-error text-xs mt-1 block"></span>
+        </div>
+
+        <div class="form-control">
+          <label asp-for="Input.Password" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Password</span></label>
+          <div class="relative">
+            <input asp-for="Input.Password" class="input input-bordered w-full pr-12 focus:border-[#00A8A8] focus:outline-none"
+                   autocomplete="new-password" placeholder="••••••••"
+                   class="input input-bordered w-full pr-12 text-gray-900 placeholder:text-gray-400 focus:border-[#00A8A8] focus:outline-none"
+                   :type="showPw ? 'text' : 'password'" />
+            <button type="button" @@click="showPw = !showPw"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1A2E4A] transition-colors">
+              <i :class="showPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <span asp-validation-for="Input.Password" class="text-error text-xs mt-1 block"></span>
+          <p class="text-xs text-gray-400 mt-1">Min. 6 characters, including uppercase &amp; digit.</p>
+        </div>
+
+        <div class="form-control">
+          <label asp-for="Input.ConfirmPassword" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Confirm password</span></label>
+          <div class="relative">
+            <input asp-for="Input.ConfirmPassword" class="input input-bordered w-full pr-12 focus:border-[#00A8A8] focus:outline-none"
+                   autocomplete="new-password" placeholder="••••••••"
+                   class="input input-bordered w-full pr-12 text-gray-900 placeholder:text-gray-400 focus:border-[#00A8A8] focus:outline-none"
+                   :type="showCp ? 'text' : 'password'" />
+            <button type="button" @@click="showCp = !showCp"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1A2E4A] transition-colors">
+              <i :class="showCp ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <span asp-validation-for="Input.ConfirmPassword" class="text-error text-xs mt-1 block"></span>
+        </div>
+
+        <button type="submit" class="btn w-full bg-[#00A8A8] hover:bg-[#007A7A] text-white border-none mt-2">
+          <i class="fas fa-user-plus"></i>Create Account
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-gray-500 mt-6">
+        Already have an account? <a asp-page="./Login" class="text-[#00A8A8] font-semibold hover:underline">Sign in</a>
+      </p>
+    </div>
+  </div>
+
+  @* Right — info panel *@
+  <div class="hidden lg:flex flex-col justify-center bg-[#1A2E4A] px-12 py-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-5"
+         style="background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.5) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.5) 40px)">
+    </div>
+    <div class="absolute left-0 top-[15%] bottom-[15%] w-1 bg-[#00A8A8] rounded-r"></div>
+    <div class="relative">
+      <h2 class="text-2xl font-bold text-white mb-8">Joining as a Student</h2>
+      <ul class="space-y-6">
+        <li class="flex gap-4 items-start">
+          <div class="w-10 h-10 rounded-lg bg-[#00A8A8]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i class="fas fa-file-alt text-[#00A8A8]"></i>
+          </div>
+          <div>
+            <p class="text-white font-semibold">Submit your proposal</p>
+            <p class="text-gray-400 text-sm mt-0.5">Describe your project title, abstract, tech stack and research area.</p>
+          </div>
+        </li>
+        <li class="flex gap-4 items-start">
+          <div class="w-10 h-10 rounded-lg bg-[#00A8A8]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i class="fas fa-user-secret text-[#00A8A8]"></i>
+          </div>
+          <div>
+            <p class="text-white font-semibold">Remain anonymous</p>
+            <p class="text-gray-400 text-sm mt-0.5">Supervisors won't see your name until they confirm interest in your work.</p>
+          </div>
+        </li>
+        <li class="flex gap-4 items-start">
+          <div class="w-10 h-10 rounded-lg bg-[#00A8A8]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i class="fas fa-handshake text-[#00A8A8]"></i>
+          </div>
+          <div>
+            <p class="text-white font-semibold">Get matched fairly</p>
+            <p class="text-gray-400 text-sm mt-0.5">Your supervisor is selected on the merit of your proposal alone.</p>
+          </div>
+        </li>
+      </ul>
+      <div class="mt-8 p-4 rounded-xl bg-[#00A8A8]/10 border border-[#00A8A8]/30 text-gray-400 text-sm flex gap-3">
+        <i class="fas fa-info-circle text-[#00A8A8] mt-0.5 flex-shrink-0"></i>
+        Supervisor and admin accounts are created by the Module Leader.
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
