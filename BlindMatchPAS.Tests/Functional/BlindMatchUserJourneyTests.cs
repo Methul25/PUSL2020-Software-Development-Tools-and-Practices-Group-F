@@ -249,15 +249,17 @@ namespace BlindMatchPAS.Tests.Functional
             // Anonymity is enforced: the available list should not include it anymore
             Assert.Empty(results);
 
-            // The match record should not expose the student identity before reveal
-            var match = await _context.ProjectMatches
+            // The match record should not expose the student identity before reveal.
+            // Use blindContext (fresh change tracker) to mirror real SQL Server behaviour where
+            // navigation properties are only populated through explicit .Include() calls.
+            var match = await blindContext.ProjectMatches
                 .Include(m => m.Proposal)
                 // Note: intentionally NOT loading .ThenInclude(p => p.Student)
                 .FirstOrDefaultAsync(m => m.ProposalId == proposal.Id);
 
             Assert.NotNull(match);
             Assert.False(match!.IsRevealed);
-            // Student navigation should be null (not eagerly loaded)
+            // Student navigation should be null — not eagerly loaded, anonymity enforced
             Assert.Null(match.Proposal!.Student);
         }
 
