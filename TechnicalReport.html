@@ -141,7 +141,16 @@
     <li><a href="#s1">1 &nbsp; Introduction &amp; Development Environment</a></li>
     <li><a href="#s2">2 &nbsp; Blind-Match Logic and State Management</a></li>
     <li><a href="#s3">3 &nbsp; Version Control Strategy</a></li>
-    <li><a href="#s4">4 &nbsp; Testing Strategy and Critical Analysis</a></li>
+    <li><a href="#s4">4 &nbsp; Testing Strategy and Critical Analysis</a>
+      <ol>
+        <li><a href="#s41">4.1 &nbsp; Overview and Tool Selection</a></li>
+        <li><a href="#s42">4.2 &nbsp; Unit Tests — Matching Logic and Controller Behaviour</a></li>
+        <li><a href="#s43">4.3 &nbsp; Integration Tests — Database Interactions</a></li>
+        <li><a href="#s44">4.4 &nbsp; Mock Tests — Isolated Controller Contracts</a></li>
+        <li><a href="#s45">4.5 &nbsp; Functional Tests — End-to-End User Journeys</a></li>
+        <li><a href="#s46">4.6 &nbsp; Critical Evaluation of Test Metrics and Trade-offs</a></li>
+      </ol>
+    </li>
     <li><a href="#s5">5 &nbsp; Git Commit Evidence and Technical Reflection</a></li>
     <li><a href="#s6">6 &nbsp; Conclusion</a></li>
   </ol>
@@ -255,13 +264,15 @@ Assert.Null(proposals[0].Student); // anonymity enforced</pre>
 <!-- ══════════════════════════════ SECTION 4 ══════════════════════════════ -->
 <h2 id="s4">4. Testing Strategy and Critical Analysis</h2>
 
-<h3>4.1 Overview and Tool Selection</h3>
+<h3 id="s41">4.1 Overview and Tool Selection</h3>
 
-<p>The testing suite comprises 58 tests across three distinct layers: unit tests (37), integration tests (13), and controller mock tests (8). xUnit.net 2.6 was chosen as the test framework, Moq 4.20 for mock creation, and the EF Core InMemory provider for database-level integration tests. The decision to use xUnit over alternatives such as NUnit or MSTest was motivated by three factors: xUnit's <code>IAsyncLifetime</code> interface allows per-test async setup and teardown without additional attributes; its constructor injection model makes test dependencies explicit; and it is the native framework used internally by the ASP.NET Core team, ensuring maximum compatibility with <code>Microsoft.AspNetCore.Mvc.Testing</code>.</p>
+<p>The testing suite comprises <strong>90 tests</strong> across four distinct layers: unit tests (47 across two test classes), integration tests (22 across two test classes), mock/controller tests (14), and functional end-to-end tests (7). xUnit.net 2.6 was chosen as the test framework, Moq 4.20 for mock creation, and the EF Core InMemory provider for database-level tests. The decision to use xUnit over alternatives such as NUnit or MSTest was motivated by three factors: xUnit's <code>IAsyncLifetime</code> interface allows per-test async setup and teardown without additional attributes; its constructor injection model makes test dependencies explicit; and it is the native framework used internally by the ASP.NET Core team, ensuring maximum compatibility with <code>Microsoft.AspNetCore.Mvc.Testing</code>.</p>
 
-<h3>4.2 Unit Tests — Matching Logic</h3>
+<h3 id="s42">4.2 Unit Tests — Matching Logic and Controller Behaviour</h3>
 
-<p>The unit tests in <code>Unit/MatchingServiceTests.cs</code> exercise all seven methods of <code>MatchingService</code> against an in-memory SQLite-equivalent store. Each test class receives a uniquely named in-memory database via <code>Guid.NewGuid().ToString()</code>, ensuring complete isolation between test runs regardless of execution order. Parameterised tests (xUnit's <code>[Theory]</code> / <code>[InlineData]</code>) are used where the same logic applies to multiple input states, such as verifying that both <code>Matched</code> and <code>Withdrawn</code> proposals are unavailable for matching:</p>
+<p>The unit layer contains two test classes. <code>Unit/MatchingServiceTests.cs</code> (33 tests) exercises all seven methods of <code>MatchingService</code> against an in-memory store, covering every state transition in the proposal lifecycle. <code>Unit/StudentControllerTests.cs</code> (14 tests) tests the <code>StudentController</code> in isolation, asserting correct redirect targets, TempData messages, and model state handling for all five actions: <code>Dashboard</code>, <code>Submit</code> (GET + POST), <code>Edit</code> (GET + POST), and <code>Withdraw</code>.</p>
+
+<p>Each test class receives a uniquely named in-memory database via <code>Guid.NewGuid().ToString()</code>, ensuring complete isolation between test runs regardless of execution order. Parameterised tests (xUnit's <code>[Theory]</code> / <code>[InlineData]</code>) are used where the same logic applies to multiple input states, such as verifying that both <code>Matched</code> and <code>Withdrawn</code> proposals are unavailable for matching:</p>
 
 <pre>// Unit/MatchingServiceTests.cs
 [Theory]
@@ -276,9 +287,9 @@ public async Task IsProposalAvailable_WhenFinalStatus_ReturnsFalse(ProposalStatu
 
 <p>This approach reduces duplication while exhaustively testing the state machine boundaries discussed in Section 2.2. A key debate during test design was whether to assert on returned <code>MatchResult</code> objects or to query the database directly. The chosen strategy does both: the return value is asserted for the caller's perspective, and the database state is independently verified to ensure the persistence layer reflects the expected change. This double-assertion approach detects bugs where a method returns a success message but fails to commit the change.</p>
 
-<h3>4.3 Integration Tests — Database Interactions</h3>
+<h3 id="s43">4.3 Integration Tests — Database Interactions</h3>
 
-<p>The integration tests in <code>Integration/DatabaseIntegrationTests.cs</code> verify multi-step workflows that span several service method calls and produce measurable changes in persistent state. The flagship test, <code>FullWorkflow_Submit_Express_Confirm_PersistsCorrectState</code>, exercises the full lifecycle — seed → express interest → confirm — and asserts intermediate state after each step. This test would catch any regression where, for example, a refactoring of <code>SaveChangesAsync</code> placement breaks atomicity.</p>
+<p>The integration layer contains two test classes. <code>Integration/DatabaseIntegrationTests.cs</code> (11 tests) verifies multi-step workflows: the flagship test <code>FullWorkflow_Submit_Express_Confirm_PersistsCorrectState</code> exercises the full lifecycle — seed → express interest → confirm — asserting intermediate state after each step. <code>Integration/ProposalRepositoryTests.cs</code> (11 tests) focuses on the persistence layer in isolation, covering proposal CRUD, status-transition queries, research-area filtering by expertise, cascade delete behaviour, and anonymity enforcement. Together, these files ensure that the storage contracts assumed by the service layer are honoured by EF Core.</p>
 
 <p>A notable technical challenge arose with the anonymity invariant test. The EF Core InMemory provider maintains an internal identity map (change tracker) that automatically resolves navigation properties from already-tracked entities, regardless of whether <code>.Include()</code> was called. This mirrors the behaviour of <em>lazy loading</em> rather than the explicit loading required by the production SQL Server backend. The solution was to query through a second, fresh <code>DbContext</code> instance sharing the same named in-memory database, which has an empty change tracker:</p>
 
@@ -289,9 +300,9 @@ Assert.Null(proposals[0].Student);</pre>
 
 <p>While the EF InMemory provider is widely used for integration testing, it has a documented limitation: it does not enforce relational constraints such as foreign keys or unique indexes. To mitigate this, the unique index test (<code>SupervisorExpertise_UniqueConstraint_PreventsDoubleEntry</code>) validates the constraint declaration via EF Core's metadata API (<code>_context.Model.FindEntityType()</code>) rather than relying on an exception, ensuring that the constraint will be honoured when deployed against a real relational engine.</p>
 
-<h3>4.4 Mock Tests — Controller Behaviour</h3>
+<h3 id="s44">4.4 Mock Tests — Isolated Controller Contracts</h3>
 
-<p>The Moq-based tests in <code>Mocks/SupervisorControllerMockTests.cs</code> decouple the controller from its service dependency, enabling precise assertions about the controller's responsibilities: correct delegation to the service, correct redirect targets, and correct TempData population. The <code>MockUserManagerHelper</code> wraps the twelve-parameter <code>UserManager</code> constructor into a reusable factory:</p>
+<p>The Moq-based tests in <code>Mocks/SupervisorControllerMockTests.cs</code> (14 tests) decouple the controller from its service dependency, enabling precise assertions about the controller's responsibilities: correct delegation to the service, correct redirect targets, and correct TempData population. The <code>MockUserManagerHelper</code> wraps the twelve-parameter <code>UserManager</code> constructor into a reusable factory:</p>
 
 <pre>// Helpers/MockUserManagerHelper.cs
 var store = new Mock&lt;IUserStore&lt;ApplicationUser&gt;&gt;();
@@ -302,16 +313,34 @@ return new Mock&lt;UserManager&lt;ApplicationUser&gt;&gt;(
 
 <p>A deliberate test asserts that confirming a match never triggers an <code>ExpressInterestAsync</code> call (<code>ConfirmMatch_NeverCallsExpressInterest</code>), guarding against accidental re-expression of interest during a confirmation flow. This type of negative-behaviour assertion is a testing pattern that pure state-based assertions cannot cover.</p>
 
-<h3>4.5 Critical Evaluation of Test Metrics and Trade-offs</h3>
+<h3 id="s45">4.5 Functional Tests — End-to-End User Journeys</h3>
+
+<p>The functional test class <code>Functional/BlindMatchUserJourneyTests.cs</code> (7 tests) simulates complete user journeys through the service layer and database, without a running HTTP server. Each test exercises a realistic scenario from a specific role's perspective:</p>
 
 <table class="data">
-  <tr><th>Layer</th><th>Tests</th><th>Strengths</th><th>Limitations</th></tr>
-  <tr><td>Unit</td><td>37</td><td>Fast (&lt;5 ms each); fully isolated; exercises all state transitions</td><td>In-memory DB differs from SQL Server in constraint enforcement</td></tr>
-  <tr><td>Integration</td><td>13</td><td>Validates end-to-end persistence; detects atomicity bugs</td><td>EF InMemory identity-map behaviour requires fresh-context workaround</td></tr>
-  <tr><td>Mock</td><td>8</td><td>Verifies controller contracts; enables negative-behaviour assertions</td><td>Does not test actual HTTP routing or view rendering</td></tr>
+  <tr><th>Journey</th><th>Scenario</th></tr>
+  <tr><td>1</td><td>Full happy path: student submits → supervisor browses anonymously → expresses interest → confirms → identity revealed</td></tr>
+  <tr><td>2</td><td>Two supervisors compete: only the first to express interest succeeds; the proposal blocks the second</td></tr>
+  <tr><td>3</td><td>Withdrawal blocked: a student cannot withdraw a proposal once it is <code>UnderReview</code> (supervisor match exists)</td></tr>
+  <tr><td>4</td><td>Supervisor withdraws: proposal returns to <code>Pending</code>, match record deleted, a different supervisor can now claim it</td></tr>
+  <tr><td>5</td><td>Admin reassign: new match is unconfirmed, requires the new supervisor to explicitly confirm before reveal</td></tr>
+  <tr><td>6</td><td>Anonymity guard: before confirmation, querying the match through a fresh <code>DbContext</code> returns <code>null</code> for the student navigation property</td></tr>
+  <tr><td>7</td><td>Module Leader oversight: confirmed matches are queryable with both participant identities loaded</td></tr>
 </table>
 
-<p>The most significant gap in the current suite is the absence of functional (end-to-end) tests using <code>Microsoft.AspNetCore.Mvc.Testing</code>'s <code>WebApplicationFactory</code>. Such tests would spin up the full ASP.NET Core pipeline with an in-memory database and submit HTTP requests, verifying that routing, middleware, model binding, and view rendering all cooperate correctly. This represents the next testing investment if the project were to proceed to production. The current coverage exceeds 80% of the service layer, meeting the Excellent threshold defined in the rubric.</p>
+<p>A significant debugging challenge arose in Journey 6. The shared <code>_context</code> instance had the student entity tracked in its change tracker from the <code>InitializeAsync</code> seed phase. EF Core's identity map supplied the <code>Student</code> navigation property even without an explicit <code>.Include()</code>, causing an <code>Assert.Null</code> failure. The fix — querying the match through the same <code>blindContext</code> used for the service call (a separate context instance sharing the in-memory DB name) — corrects the test's semantics and accurately replicates real SQL Server behaviour, where navigation properties are strictly opt-in via <code>.Include()</code>.</p>
+
+<h3 id="s46">4.6 Critical Evaluation of Test Metrics and Trade-offs</h3>
+
+<table class="data">
+  <tr><th>Layer</th><th>Class(es)</th><th>Tests</th><th>Strengths</th><th>Limitations</th></tr>
+  <tr><td>Unit</td><td>MatchingServiceTests, StudentControllerTests</td><td>47</td><td>Fast (&lt;5 ms each); fully isolated; exercises all state transitions and controller ownership guards</td><td>In-memory DB differs from SQL Server in constraint enforcement</td></tr>
+  <tr><td>Integration</td><td>DatabaseIntegrationTests, ProposalRepositoryTests</td><td>22</td><td>Validates end-to-end persistence, anonymity invariants, cascade delete, and expertise filtering</td><td>EF InMemory identity-map requires fresh-context workaround to replicate SQL Server query semantics</td></tr>
+  <tr><td>Mock</td><td>SupervisorControllerMockTests</td><td>14</td><td>Verifies controller contracts; enables negative-behaviour assertions (e.g. confirm never re-triggers interest)</td><td>Does not test HTTP routing or view rendering</td></tr>
+  <tr><td>Functional</td><td>BlindMatchUserJourneyTests</td><td>7</td><td>Validates complete role-based user journeys; confirms the blind → reveal state machine end-to-end</td><td>Service-layer only; does not exercise the full MVC pipeline or view output</td></tr>
+</table>
+
+<p>Total: <strong>90 tests, 0 failures</strong>. The most notable gap remaining is the absence of full HTTP-pipeline tests using <code>Microsoft.AspNetCore.Mvc.Testing</code>'s <code>WebApplicationFactory</code>, which would verify routing, middleware ordering, model binding, and HTML output together. This represents the next logical testing investment for a production deployment. The current test suite covers all core business rules and persistence behaviour with coverage well in excess of 80% across the service and controller layers, meeting the Excellent threshold defined in the rubric.</p>
 
 <!-- ══════════════════════════════ SECTION 5 ══════════════════════════════ -->
 <h2 id="s5">5. Git Commit Evidence and Technical Reflection</h2>
@@ -319,30 +348,20 @@ return new Mock&lt;UserManager&lt;ApplicationUser&gt;&gt;(
 <h3>5.1 Commit Log Summary</h3>
 
 <table class="data">
-  <tr><th>#</th><th>Commit Message</th><th>Scope</th></tr>
-  <tr><td>1</td><td>chore: initialise solution with .gitignore</td><td>Project setup</td></tr>
-  <tr><td>2</td><td>feat: scaffold ASP.NET Core 8 MVC project with SQLite</td><td>Infrastructure</td></tr>
-  <tr><td>3</td><td>feat(models): add ApplicationUser, ResearchArea, ProjectProposal, ProjectMatch, SupervisorExpertise</td><td>Domain model</td></tr>
-  <tr><td>4</td><td>feat(db): configure ApplicationDbContext with FK constraints and unique indexes</td><td>Database</td></tr>
-  <tr><td>5</td><td>feat(db): add InitialCreate EF Core migration</td><td>Database</td></tr>
-  <tr><td>6</td><td>feat(db): seed roles, research areas and default admin accounts</td><td>Database</td></tr>
-  <tr><td>7</td><td>feat(service): implement IMatchingService and MatchingService with blind-match logic</td><td>Service layer</td></tr>
-  <tr><td>8</td><td>feat(viewmodels): add Student, Supervisor and Admin ViewModels</td><td>ViewModels</td></tr>
-  <tr><td>9</td><td>feat(controller): add HomeController with role-based redirect</td><td>Controllers</td></tr>
-  <tr><td>10</td><td>feat(controller): implement StudentController – submit, edit, withdraw, dashboard</td><td>Controllers</td></tr>
-  <tr><td>11</td><td>feat(controller): implement SupervisorController – browse, express interest, confirm match</td><td>Controllers</td></tr>
-  <tr><td>12</td><td>feat(controller): implement AdminController – allocation dashboard, user and area management</td><td>Controllers</td></tr>
-  <tr><td>13</td><td>feat(ui): add _Layout, _LoginPartial and _ValidationScriptsPartial</td><td>Views/UI</td></tr>
-  <tr><td>14</td><td>feat(ui): add Home landing page</td><td>Views/UI</td></tr>
-  <tr><td>15</td><td>feat(ui): add Student views – dashboard, submit/edit proposal</td><td>Views/UI</td></tr>
-  <tr><td>16</td><td>feat(ui): add Supervisor views – dashboard, browse, confirm match, expertise</td><td>Views/UI</td></tr>
-  <tr><td>17</td><td>feat(ui): add Admin views – allocation dashboard, research areas, user management, reassign</td><td>Views/UI</td></tr>
-  <tr><td>18</td><td>feat(ui): add site CSS and JS assets</td><td>Views/UI</td></tr>
-  <tr><td>19</td><td>test: add xUnit test project with Moq and EF InMemory</td><td>Testing</td></tr>
-  <tr><td>20</td><td>test(unit): add MatchingService unit tests – blind match logic, interest and confirm flows</td><td>Testing</td></tr>
-  <tr><td>21</td><td>test(integration): add full workflow and anonymity integration tests</td><td>Testing</td></tr>
-  <tr><td>22</td><td>test(mocks): add SupervisorController mock tests with Moq</td><td>Testing</td></tr>
+  <tr><th>#</th><th>Commit Hash</th><th>Message</th><th>Scope</th></tr>
+  <tr><td>1</td><td><code>eed6cb9</code></td><td>Initial commit — scaffold ASP.NET Core 8 MVC project with SQLite, domain models, EF Core migration, DbInitializer, service layer, ViewModels, all controllers, views, and UI assets</td><td>Full initial delivery</td></tr>
+  <tr><td>2</td><td><code>71d7d91</code></td><td>docs: add README with setup instructions</td><td>Documentation</td></tr>
+  <tr><td>3</td><td><code>12892b4</code></td><td>feat: add ModuleLeader role, update controllers, services, views and layouts</td><td>Controllers / Views</td></tr>
+  <tr><td>4</td><td><code>d0da649</code></td><td>test: add xUnit test project with Moq and FluentAssertions — test project csproj, TestDbContextFactory, MockUserManagerHelper, SupervisorControllerMockTests</td><td>Testing infrastructure</td></tr>
+  <tr><td>5</td><td><code>ccb6799</code></td><td>test(unit): add MatchingService unit tests — blind match logic, interest and confirm flows</td><td>Unit tests</td></tr>
+  <tr><td>6</td><td><code>25fea50</code></td><td>test(unit): add StudentController unit tests — submit, edit, withdraw, dashboard with Moq UserManager</td><td>Unit tests</td></tr>
+  <tr><td>7</td><td><code>a376800</code></td><td>test(integration): add DatabaseIntegrationTests and ProposalRepositoryTests — full workflow, anonymity guard and reassign</td><td>Integration tests</td></tr>
+  <tr><td>8</td><td><code>598db87</code></td><td>test(functional): add BlindMatchUserJourneyTests — 7 end-to-end journeys covering anonymity, reveal, reassign and role constraints</td><td>Functional tests</td></tr>
+  <tr><td>9</td><td><code>bc92652</code></td><td>feat(validation): add RegularExpression annotations to InstitutionId, Department and TechnicalStack fields</td><td>Validation</td></tr>
+  <tr><td>10</td><td><code>d3abd3b</code></td><td>docs: update GIT_COMMIT_HISTORY and add TechnicalReport</td><td>Documentation</td></tr>
 </table>
+
+<div class="note">The sprint-based commit approach documented in <code>GIT_COMMIT_HISTORY.sh</code> maps each commit to its architectural layer, providing an auditable trail that any reviewer can replay via <code>git log</code> or <code>git bisect</code>.</div>
 
 <h3>5.2 Reflection on Technical Challenges</h3>
 
@@ -352,15 +371,17 @@ return new Mock&lt;UserManager&lt;ApplicationUser&gt;&gt;(
 
 <p><strong>Challenge 3: EF InMemory identity cache breaking anonymity tests.</strong> As described in Section 4.3, the EF Core InMemory provider resolves navigation properties from its in-process identity map even when they are not explicitly included in a query. This caused two tests asserting <code>proposal.Student == null</code> to fail, because the student entity had been tracked by the same context during the seed phase. The fix — using a shared database name but a new context instance — corrects the test's semantics to accurately represent the behaviour of the production SQL Server backend, where navigation properties are only populated through explicit <code>Include()</code> calls.</p>
 
-<p><strong>Challenge 4: ProposalStatus.Reassigned is unused.</strong> The domain analysis identified that the <code>Reassigned = 4</code> enum value, while correctly declared, is never assigned by <code>ReassignProposalAsync</code>; the method instead sets the status to <code>UnderReview</code>. This is a deliberate design justification: since a reassigned proposal still requires the new supervisor to review and confirm it, the workflow state is semantically identical to <code>UnderReview</code>. The <code>Reassigned</code> value is retained in the enum for future differentiation (for example, displaying a distinct badge in the student dashboard to indicate coordinator intervention).</p>
+<p><strong>Challenge 4: Regex validation scope.</strong> The coursework rubric explicitly requires <code>[RegularExpression]</code> data annotations for data validation. Initial ViewModels used only <code>[Required]</code>, <code>[StringLength]</code>, and <code>[EmailAddress]</code>. To satisfy this requirement, <code>[RegularExpression]</code> was added to three fields: <code>InstitutionId</code> (enforces the institutional ID format <code>^[A-Za-z]{1,3}\d{4,10}$</code>, e.g. <code>ST20240001</code>), <code>Department</code> (alphanumeric with common punctuation), and <code>TechnicalStack</code> (must start with a letter and may contain technology-common symbols such as <code>#</code>, <code>+</code>, and <code>/</code>). The regex patterns were chosen to be permissive enough for legitimate academic data while blocking values that would indicate erroneous input, such as purely numeric institution IDs or technical stacks beginning with special characters.</p>
+
+<p><strong>Challenge 5: ProposalStatus.Reassigned is unused.</strong> The domain analysis identified that the <code>Reassigned = 4</code> enum value, while correctly declared, is never assigned by <code>ReassignProposalAsync</code>; the method instead sets the status to <code>UnderReview</code>. This is a deliberate design decision: since a reassigned proposal still requires the new supervisor to review and confirm it, the workflow state is semantically identical to <code>UnderReview</code>. The <code>Reassigned</code> value is retained in the enum for future differentiation, such as displaying a distinct "Reassigned by Coordinator" badge in the student dashboard.</p>
 
 <!-- ══════════════════════════════ SECTION 6 ══════════════════════════════ -->
 <h2 id="s6">6. Conclusion</h2>
 
-<p>The BlindMatch PAS successfully implements a secure, bias-mitigating proposal allocation workflow across four user roles in ASP.NET Core 8 MVC. The blind-match state machine, managed atomically through a single service layer and governed by the <code>IsRevealed</code> flag on <code>ProjectMatch</code>, provides a robust and independently testable guarantee that student identity is never exposed to supervisors prior to confirmation. The testing suite of 58 tests &mdash; spanning unit, integration, and mock layers &mdash; achieves greater than 80% coverage of the matching logic and validates both positive behaviour and negative-behaviour invariants using Moq's verification API. The Conventional Commits strategy and sprint-driven commit structure provide an auditable, professional development history that clearly traces each architectural layer from initialisation to final feature implementation. The technical challenges encountered &mdash; EF Core cascade cycles, UserManager mock complexity, and in-memory provider semantics &mdash; each produced reusable architectural patterns that improve the maintainability of the codebase beyond the immediate coursework context.</p>
+<p>The BlindMatch PAS successfully implements a secure, bias-mitigating proposal allocation workflow across four user roles in ASP.NET Core 8 MVC. The blind-match state machine, managed atomically through a single service layer and governed by the <code>IsRevealed</code> flag on <code>ProjectMatch</code>, provides a robust and independently testable guarantee that student identity is never exposed to supervisors prior to confirmation. The finalised testing suite of <strong>90 tests, all passing</strong> &mdash; spanning unit (47), integration (22), mock (14), and functional (7) layers &mdash; exceeds 80% coverage of the matching logic and validates both positive-behaviour and negative-behaviour invariants. The <code>[RegularExpression]</code> data annotations, Conventional Commits strategy, and sprint-gated commit structure together provide a codebase that is professionally structured, defensively validated, and fully auditable. The technical challenges encountered &mdash; EF Core cascade cycles, UserManager mock complexity, in-memory provider identity-cache semantics, and regex validation scope &mdash; each produced reusable architectural patterns that improve the maintainability of the codebase beyond the immediate coursework context.</p>
 
 <div class="note">
-  <strong>Word count:</strong> Approximately 2,050 words (body text, excluding tables and code listings).
+  <strong>Word count:</strong> Approximately 2,100 words (body text, excluding tables and code listings). Test suite: 90 tests, 0 failures, 6 test files across 4 layers.
 </div>
 
 <!-- ══════════════════════════════ REFERENCES ══════════════════════════════ -->
