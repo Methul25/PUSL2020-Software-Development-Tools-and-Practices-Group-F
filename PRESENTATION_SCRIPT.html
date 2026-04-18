@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BlindMatchPAS – Presentation Script | PUSL2020</title>
+<style>
+  @page { size: A4; margin: 25mm 20mm 25mm 20mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    line-height: 1.7;
+    color: #1a1a1a;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 10mm 0;
+  }
+  /* Cover */
+  .cover {
+    text-align: center;
+    padding: 60px 0 80px;
+    border-bottom: 3px double #1f3a70;
+    margin-bottom: 40px;
+    page-break-after: always;
+  }
+  .cover h1 { font-size: 22pt; color: #1f3a70; margin-bottom: 6px; }
+  .cover h2 { font-size: 14pt; font-weight: normal; color: #444; margin: 0 0 30px; }
+  .cover table { margin: 30px auto; border-collapse: collapse; }
+  .cover td { padding: 5px 20px; font-size: 11pt; }
+  .cover td:first-child { font-weight: bold; text-align: right; color: #555; }
+  /* Headings */
+  h2 {
+    font-size: 14pt;
+    color: #1f3a70;
+    border-bottom: 2px solid #1f3a70;
+    padding-bottom: 4px;
+    margin-top: 36px;
+    page-break-after: avoid;
+  }
+  h3 { font-size: 12pt; color: #2c5099; margin-top: 20px; page-break-after: avoid; }
+  p { margin: 0 0 10px; text-align: justify; }
+  /* Speaker block */
+  .speaker-block {
+    border: 2px solid #1f3a70;
+    border-radius: 6px;
+    margin: 20px 0;
+    page-break-inside: avoid;
+  }
+  .speaker-header {
+    background: #1f3a70;
+    color: #fff;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .speaker-header .member-id { font-size: 14pt; font-weight: bold; }
+  .speaker-header .member-role { font-size: 10.5pt; font-style: italic; opacity: 0.9; }
+  .speaker-header .timing { font-size: 10pt; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
+  .speaker-body { padding: 12px 16px; }
+  /* Cue boxes */
+  .cue {
+    background: #eef3ff;
+    border-left: 4px solid #2c5099;
+    padding: 5px 12px;
+    margin: 8px 0;
+    font-size: 10pt;
+    font-style: italic;
+    color: #2c5099;
+  }
+  .cue-demo {
+    background: #fff3e0;
+    border-left: 4px solid #e65100;
+    padding: 5px 12px;
+    margin: 8px 0;
+    font-size: 10pt;
+    font-style: italic;
+    color: #bf360c;
+  }
+  /* Script text */
+  .script {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11.5pt;
+    line-height: 1.8;
+    color: #1a1a1a;
+    margin: 6px 0;
+  }
+  .transition {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    padding: 5px 12px;
+    margin: 10px 0;
+    font-size: 10pt;
+    font-style: italic;
+    color: #15803d;
+  }
+  /* Summary table */
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 10.5pt;
+  }
+  table.data th {
+    background: #1f3a70;
+    color: #fff;
+    padding: 7px 10px;
+    text-align: left;
+  }
+  table.data td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #dde3ef;
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: #f4f6fa; }
+  .note {
+    background: #fffbe6;
+    border-left: 4px solid #f0a500;
+    padding: 8px 14px;
+    margin: 14px 0;
+    font-size: 10.5pt;
+  }
+  .files-box {
+    background: #f0fdf4;
+    border: 1.5px solid #16a34a;
+    border-radius: 4px;
+    padding: 7px 14px;
+    margin: 10px 0 14px;
+    font-size: 10pt;
+  }
+  .files-box strong { color: #15803d; display: block; margin-bottom: 4px; }
+  .files-box code { background: #dcfce7; }
+  code { font-family: "Courier New", Courier, monospace; font-size: 9.5pt; background: #eef1f7; padding: 1px 4px; border-radius: 3px; }
+  .page-footer {
+    text-align: center;
+    font-size: 9pt;
+    color: #888;
+    border-top: 1px solid #ccc;
+    padding-top: 6px;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ COVER ══════════════════ -->
+<div class="cover">
+  <h1>BlindMatchPAS</h1>
+  <h2>Group Presentation Script &mdash; PUSL2020: Software Development Tools and Practices</h2>
+  <table>
+    <tr><td>Module</td><td>PUSL2020 &mdash; Software Development Tools and Practices</td></tr>
+    <tr><td>System</td><td>Blind-Match Project Approval System (ASP.NET Core 8 MVC)</td></tr>
+    <tr><td>Members</td><td>8 (Members 1&ndash;8 — replace names below with actual names)</td></tr>
+    <tr><td>Target Duration</td><td>~16 minutes (approximately 2 minutes per member)</td></tr>
+    <tr><td>Format</td><td>Live demo + technical walkthrough</td></tr>
+    <tr><td>Date</td><td>April 2026</td></tr>
+  </table>
+  <div class="note" style="text-align:left; margin-top: 30px;">
+    <strong>Before the session:</strong> Clone the repo, run <code>dotnet run</code>, confirm the app starts at <code>http://localhost:5000</code>.
+    Member 4 (Demo) should have the browser open and ready with the login page visible.
+    Member 5 (Git) should have a terminal open showing <code>git log --oneline</code>.
+  </div>
+</div>
+
+<!-- ══════════════════ ROLES OVERVIEW ══════════════════ -->
+<h2>Roles, Responsibilities &amp; Files to Upload</h2>
+
+<p>Each member is responsible for ensuring their owned files are committed and pushed to the repository <strong>before</strong> the presentation. The table below maps each member to their presentation role, the report sections they cover, and the exact files they must have uploaded to Git.</p>
+
+<table class="data">
+  <tr>
+    <th>Member</th>
+    <th>Role Title</th>
+    <th>Sections Covered</th>
+    <th>Files to Commit / Upload to Git</th>
+    <th>Time</th>
+  </tr>
+  <tr>
+    <td><strong>Member 1</strong></td>
+    <td>MC &amp; Introduction</td>
+    <td>Opens presentation; introduces team; frames the problem</td>
+    <td>
+      <code>README.md</code><br/>
+      <code>TechnicalReport.html</code><br/>
+      <code>PRESENTATION_SCRIPT.html</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 2</strong></td>
+    <td>Architecture &amp; Environment</td>
+    <td>Section 1 — Tech stack, MVC pattern, DI, RBAC, service layer</td>
+    <td>
+      <code>BlindMatchPAS/Program.cs</code><br/>
+      <code>BlindMatchPAS/appsettings.json</code><br/>
+      <code>BlindMatchPAS/appsettings.Development.json</code><br/>
+      <code>BlindMatchPAS/BlindMatchPAS.csproj</code><br/>
+      <code>BlindMatchPAS.sln</code><br/>
+      <code>.gitignore</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 3</strong></td>
+    <td>Blind-Match Logic &amp; State Machine</td>
+    <td>Section 2 — ProposalStatus enum, IsRevealed flag, dual-layer anonymity</td>
+    <td>
+      <code>BlindMatchPAS/Models/ProposalStatus.cs</code><br/>
+      <code>BlindMatchPAS/Models/ProjectMatch.cs</code><br/>
+      <code>BlindMatchPAS/Models/ProjectProposal.cs</code><br/>
+      <code>BlindMatchPAS/Models/ApplicationUser.cs</code><br/>
+      <code>BlindMatchPAS/Models/ResearchArea.cs</code><br/>
+      <code>BlindMatchPAS/Models/SupervisorExpertise.cs</code><br/>
+      <code>BlindMatchPAS/Services/IMatchingService.cs</code><br/>
+      <code>BlindMatchPAS/Services/MatchingService.cs</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 4</strong></td>
+    <td>Live Demo</td>
+    <td>Running application — student submit, supervisor browse &amp; confirm, admin reassign</td>
+    <td>
+      <code>BlindMatchPAS/Views/Student/Submit.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Student/Dashboard.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Student/Edit.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Supervisor/Browse.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Supervisor/Dashboard.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Supervisor/ConfirmMatch.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Supervisor/ProposalDetail.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Supervisor/ConfirmedProposalDetail.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Supervisor/ManageExpertise.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Admin/Dashboard.cshtml</code><br/>
+      <code>BlindMatchPAS/Views/Admin/Reassign.cshtml</code><br/>
+      <code>BlindMatchPAS/wwwroot/css/site.css</code><br/>
+      <code>BlindMatchPAS/wwwroot/js/site.js</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 5</strong></td>
+    <td>Version Control Strategy</td>
+    <td>Section 3 — Conventional Commits, sprint-driven flow, git log evidence</td>
+    <td>
+      <code>GIT_COMMIT_HISTORY.sh</code><br/>
+      <code>BlindMatchPAS/Data/ApplicationDbContext.cs</code><br/>
+      <code>BlindMatchPAS/Data/DbInitializer.cs</code><br/>
+      <code>BlindMatchPAS/Migrations/20260412141355_InitialCreate.cs</code><br/>
+      <code>BlindMatchPAS/Migrations/20260412141355_InitialCreate.Designer.cs</code><br/>
+      <code>BlindMatchPAS/Migrations/ApplicationDbContextModelSnapshot.cs</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 6</strong></td>
+    <td>Testing Overview &amp; Unit Tests</td>
+    <td>Sections 4.1 &amp; 4.2 — 90-test suite introduction, MatchingServiceTests, StudentControllerTests</td>
+    <td>
+      <code>BlindMatchPAS.Tests/BlindMatchPAS.Tests.csproj</code><br/>
+      <code>BlindMatchPAS.Tests/Helpers/TestDbContextFactory.cs</code><br/>
+      <code>BlindMatchPAS.Tests/Helpers/MockUserManagerHelper.cs</code><br/>
+      <code>BlindMatchPAS.Tests/Unit/MatchingServiceTests.cs</code><br/>
+      <code>BlindMatchPAS.Tests/Unit/StudentControllerTests.cs</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 7</strong></td>
+    <td>Integration, Mock &amp; Functional Tests</td>
+    <td>Sections 4.3, 4.4 &amp; 4.5 — database tests, Moq tests, end-to-end journeys</td>
+    <td>
+      <code>BlindMatchPAS.Tests/Integration/DatabaseIntegrationTests.cs</code><br/>
+      <code>BlindMatchPAS.Tests/Integration/ProposalRepositoryTests.cs</code><br/>
+      <code>BlindMatchPAS.Tests/Mocks/SupervisorControllerMockTests.cs</code><br/>
+      <code>BlindMatchPAS.Tests/Functional/BlindMatchUserJourneyTests.cs</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+  <tr>
+    <td><strong>Member 8</strong></td>
+    <td>Critical Evaluation, Challenges &amp; Conclusion</td>
+    <td>Sections 4.6, 5 &amp; 6 — test metrics, 5 challenges, commit evidence, conclusion</td>
+    <td>
+      <code>BlindMatchPAS/Controllers/AdminController.cs</code><br/>
+      <code>BlindMatchPAS/Controllers/StudentController.cs</code><br/>
+      <code>BlindMatchPAS/Controllers/SupervisorController.cs</code><br/>
+      <code>BlindMatchPAS/Controllers/ModuleLeaderController.cs</code><br/>
+      <code>BlindMatchPAS/Controllers/HomeController.cs</code><br/>
+      <code>BlindMatchPAS/ViewModels/Admin/AdminViewModels.cs</code><br/>
+      <code>BlindMatchPAS/ViewModels/Student/SubmitProposalViewModel.cs</code><br/>
+      <code>BlindMatchPAS/ViewModels/Student/ProposalStatusViewModel.cs</code><br/>
+      <code>BlindMatchPAS/ViewModels/Supervisor/SupervisorViewModels.cs</code><br/>
+      <code>BlindMatchPAS/ViewModels/ModuleLeader/ModuleLeaderViewModels.cs</code>
+    </td>
+    <td>~2 min</td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>Before the presentation day — checklist for every member:</strong><br/>
+  1. Run <code>git status</code> — confirm all your files show as clean (no unstaged changes).<br/>
+  2. Run <code>git log --oneline -5</code> — confirm your latest commit is visible.<br/>
+  3. Check <strong>github.com/Methul25/Software-tools-project</strong> in a browser — your files must appear in the repository.<br/>
+  4. If you see <em>untracked</em> or <em>modified</em> files: <code>git add &lt;file&gt;</code> &rarr; <code>git commit -m "..."</code> &rarr; <code>git push origin main</code>.<br/>
+  5. <strong>Never commit</strong>: <code>bin/</code>, <code>obj/</code>, <code>*.db</code>, <code>*.db-shm</code>, <code>*.db-wal</code> — these are in <code>.gitignore</code> for a reason.
+</div>
+<div class="note">
+  <strong>Colour key used throughout this script:</strong>
+  <span style="color:#2c5099;">&nbsp;Blue italic = slide / screen cue.&nbsp;</span>
+  <span style="color:#bf360c;">&nbsp;Orange italic = live demo action.&nbsp;</span>
+  <span style="color:#15803d;">&nbsp;Green italic = transition line to the next speaker.&nbsp;</span>
+  Regular text = words to say aloud.
+</div>
+
+<!-- ══════════════════ MEMBER 1 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 1 &mdash; [NAME]</span>
+    <span class="member-role">MC &amp; Project Introduction</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>README.md</code> &nbsp;&bull;&nbsp;
+      <code>TechnicalReport.html</code> &nbsp;&bull;&nbsp;
+      <code>PRESENTATION_SCRIPT.html</code>
+    </div>
+    <div class="cue">[SLIDE: Title slide &mdash; "BlindMatchPAS: A Blind-Match Project Approval System | PUSL2020 | Group N"]</div>
+    <p class="script">Good morning / good afternoon. My name is [NAME], and on behalf of our team, welcome to the presentation of BlindMatchPAS &mdash; our submission for PUSL2020: Software Development Tools and Practices.</p>
+    <p class="script">The question we started with was this: in a university setting, when supervisors see a list of project proposals alongside student names and IDs, do they choose the proposal on merit, or on familiarity? Research by Hinton (2015) shows that unconscious affinity bias is real and measurable. Our system removes that variable entirely.</p>
+    <p class="script">BlindMatchPAS is a fully functional web application that separates the act of <em>selecting</em> a proposal from the act of <em>knowing who wrote it</em>. A supervisor reviews, shortlists, and confirms a match before the student's identity is ever shown. The reveal only happens at the moment of mutual confirmation &mdash; by design, at the database level, not just the UI level.</p>
+    <p class="script">Today we will walk you through the system architecture, the matching logic, a live demonstration, our version control strategy, and a comprehensive testing suite comprising 90 tests across four distinct layers. Each of my colleagues owns a specific area, and together we will cover every aspect of our technical report.</p>
+    <div class="transition">[Hand over] "I'll begin by passing to [NAME 2], who will walk you through the technology choices and architecture we used to build this."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 2 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 2 &mdash; [NAME]</span>
+    <span class="member-role">System Architecture &amp; Development Environment</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>BlindMatchPAS/Program.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/appsettings.json</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/appsettings.Development.json</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/BlindMatchPAS.csproj</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.sln</code> &nbsp;&bull;&nbsp;
+      <code>.gitignore</code>
+    </div>
+    <div class="cue">[SLIDE: Project structure diagram or tech-stack list &mdash; ASP.NET Core 8 / EF Core / SQLite / Identity / xUnit]</div>
+    <p class="script">Thank you, [NAME 1]. BlindMatchPAS is built on <strong>ASP.NET Core 8 MVC</strong>. We chose this framework because it enforces separation of concerns natively, has built-in Identity for role-based access control, and the dependency injection container is first-class &mdash; which had a direct positive impact on our testing strategy.</p>
+    <p class="script">For persistence, we used <strong>Entity Framework Core</strong> with <strong>SQLite</strong> in development. That means the application runs entirely self-contained: clone the repository, run <code>dotnet run</code>, and the database is created and seeded automatically. The connection string and a single-line swap to <code>UseSqlServer()</code> is all that separates the development configuration from a production deployment.</p>
+    <p class="script">The four user roles &mdash; Student, Supervisor, Module Leader, and System Administrator &mdash; are enforced at every controller action via <code>[Authorize(Roles = "...")]</code>. This is not a UI-level guard; it is enforced by the ASP.NET Core middleware pipeline, so route manipulation cannot bypass it.</p>
+    <p class="script">The most important architectural decision was the <strong>service layer</strong>. All business logic lives in one class: <code>MatchingService</code>, implementing the <code>IMatchingService</code> interface. It is registered in <code>Program.cs</code> as a scoped service and injected into every controller that needs it. Controllers never touch the database directly. This single decision is what made writing 90 isolated, fast tests straightforward.</p>
+    <div class="transition">[Hand over] "That architecture creates the foundation. [NAME 3] will now explain the specific matching logic built on top of it."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 3 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 3 &mdash; [NAME]</span>
+    <span class="member-role">Blind-Match Logic &amp; State Machine</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>BlindMatchPAS/Models/ProposalStatus.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Models/ProjectMatch.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Models/ProjectProposal.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Models/ApplicationUser.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Models/ResearchArea.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Models/SupervisorExpertise.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Services/IMatchingService.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Services/MatchingService.cs</code>
+    </div>
+    <div class="cue">[SLIDE: State machine diagram &mdash; Pending &rarr; UnderReview &rarr; Matched, with withdrawal and reassignment arrows]</div>
+    <p class="script">Thank you, [NAME 2]. The heart of the system is the <strong>ProposalStatus state machine</strong>, encoded as a C# enum with five values: <code>Pending</code>, <code>UnderReview</code>, <code>Matched</code>, <code>Withdrawn</code>, and <code>Reassigned</code>.</p>
+    <p class="script">Every proposal starts as <code>Pending</code> when a student submits it. When a supervisor expresses interest, the proposal moves to <code>UnderReview</code> and a <code>ProjectMatch</code> record is created with <code>IsRevealed = false</code>. When the supervisor confirms, it transitions to <code>Matched</code> and, crucially, <code>IsRevealed</code> is set to <code>true</code>. That Boolean is the entire identity-reveal gate.</p>
+    <p class="script">The anonymity guarantee is enforced at <strong>two independent layers</strong>. First, the service layer's <code>GetProposalsForSupervisorAsync</code> deliberately omits <code>.Include(p =&gt; p.Student)</code> in its LINQ query &mdash; EF Core will not populate the student navigation property unless explicitly asked. Second, in <code>StudentController</code>, the supervisor's name is only projected into the ViewModel if <code>IsRevealed == true</code> in the database. Even if a front-end rendering bug occurred, the controller would never pass supervisor identity to the view prematurely.</p>
+    <p class="script">Reassignment, which any Module Leader or Admin can trigger, removes the existing match, creates a new unconfirmed match for the new supervisor, and resets the proposal to <code>UnderReview</code>. The new supervisor must still confirm, so the blind-match guarantee is preserved even in coordinator-driven workflows.</p>
+    <div class="transition">[Hand over] "Now [NAME 4] will show you exactly what this looks like from a user's perspective in the live application."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 4 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 4 &mdash; [NAME]</span>
+    <span class="member-role">Live System Demo</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>BlindMatchPAS/Views/Student/Submit.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Student/Dashboard.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Student/Edit.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Supervisor/Browse.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Supervisor/Dashboard.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Supervisor/ConfirmMatch.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Admin/Dashboard.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Views/Admin/Reassign.cshtml</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/wwwroot/css/site.css</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/wwwroot/js/site.js</code>
+    </div>
+    <div class="cue">[SCREEN: Browser open at http://localhost:5000 &mdash; login page visible]</div>
+    <p class="script">Thank you, [NAME 3]. Let me show you the system running.</p>
+    <div class="cue-demo">[LOG IN as Student: student@test.ac.lk / or a seeded student account]</div>
+    <p class="script">I'm logging in as a student. From the student dashboard, I can submit a new project proposal. Notice I enter a title, an abstract, a technical stack, and a research area. The <code>[RegularExpression]</code> validation on the technical stack field ensures, for example, that the field must start with a letter and cannot begin with a special character.</p>
+    <div class="cue-demo">[SUBMIT a proposal &mdash; status shows "Pending" on dashboard]</div>
+    <p class="script">The proposal is now Pending. The student sees no supervisor information whatsoever.</p>
+    <div class="cue-demo">[LOG OUT &mdash; LOG IN as Supervisor]</div>
+    <p class="script">Now as a Supervisor, I open Browse Proposals. I can see the proposal &mdash; but there is no student name, no student ID, no contact details. I see only the intellectual content: title, abstract, technical stack, research area. This is the blind match.</p>
+    <div class="cue-demo">[CLICK Express Interest &mdash; status changes to UnderReview]</div>
+    <div class="cue-demo">[CLICK Confirm Match]</div>
+    <p class="script">The moment I confirm, <code>IsRevealed</code> is set to true in the database. My dashboard now shows the student's full name and email.</p>
+    <div class="cue-demo">[LOG OUT &mdash; LOG IN as Student]</div>
+    <p class="script">Back on the student's dashboard, the supervisor's name and email are now visible &mdash; because the match is confirmed and both sides can now see each other.</p>
+    <div class="cue-demo">[LOG OUT &mdash; LOG IN as admin@blindmatch.ac.lk / Admin@12345 &mdash; show Admin dashboard and Reassign option briefly]</div>
+    <p class="script">And as System Admin, I can reassign any matched proposal to a different supervisor, which resets the state to UnderReview for the new supervisor to confirm.</p>
+    <div class="transition">[Hand over] "That's the system from the user's perspective. [NAME 5] will now show you the version control strategy that disciplines our development process."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 5 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 5 &mdash; [NAME]</span>
+    <span class="member-role">Version Control Strategy</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>GIT_COMMIT_HISTORY.sh</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Data/ApplicationDbContext.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Data/DbInitializer.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Migrations/20260412141355_InitialCreate.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Migrations/20260412141355_InitialCreate.Designer.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Migrations/ApplicationDbContextModelSnapshot.cs</code>
+    </div>
+    <div class="cue">[SLIDE: git log --oneline output showing the 10 commits &mdash; or switch to terminal and run: git log --oneline]</div>
+    <p class="script">Thank you, [NAME 4]. Every commit in this repository follows the <strong>Conventional Commits 1.0.0</strong> specification. The format is: <code>type(scope): description</code>. For example, <code>feat(service): implement IMatchingService</code> immediately tells any reviewer that this commit adds a feature to the service layer. The types we used are: <code>feat</code>, <code>fix</code>, <code>test</code>, <code>chore</code>, and <code>docs</code>.</p>
+    <p class="script">This was not cosmetic. Conventional Commits forces each contributor to classify the type of change they are making before committing. It prevents mixed-concern commits &mdash; for example, bundling a model change with a test change in one commit, which is notoriously difficult to roll back cleanly. Every architectural layer is individually addressable in history.</p>
+    <p class="script">Our ten commits map to six development sprints. Sprint 1 initialised the project. Sprint 2 built the domain model and migration. Sprint 3 delivered the service layer. Sprint 4 added controllers. Sprint 5 covered UI. Sprint 6 added all test classes, one commit per test file &mdash; unit, integration, and functional each in their own commit.</p>
+    <p class="script">If a regression appeared in the service layer, <code>git bisect</code> could binary-search the commit history and pinpoint the exact change responsible in under a minute. That is the practical value of granular, well-scoped commits beyond just a clean-looking log.</p>
+    <div class="transition">[Hand over] "Now [NAME 6] will take you inside the testing strategy that validates every one of those features."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 6 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 6 &mdash; [NAME]</span>
+    <span class="member-role">Testing Overview &amp; Unit Tests</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>BlindMatchPAS.Tests/BlindMatchPAS.Tests.csproj</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Helpers/TestDbContextFactory.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Helpers/MockUserManagerHelper.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Unit/MatchingServiceTests.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Unit/StudentControllerTests.cs</code>
+    </div>
+    <div class="cue">[SLIDE: Test pyramid diagram or table showing 4 layers; or switch to terminal and run: dotnet test --verbosity quiet]</div>
+    <p class="script">Thank you, [NAME 5]. Our test suite runs <strong>90 tests, zero failures</strong>. They are organised into four layers: 47 unit tests, 22 integration tests, 14 mock tests, and 7 functional end-to-end tests.</p>
+    <p class="script">We chose <strong>xUnit.net</strong> over NUnit or MSTest for three specific reasons. First, xUnit's <code>IAsyncLifetime</code> interface provides per-test async setup and teardown without extra attributes &mdash; essential given our database-seeding requirements. Second, its constructor injection model makes dependencies explicit. Third, it is the framework used internally by the ASP.NET Core team, which guarantees compatibility with the ecosystem.</p>
+    <p class="script">The unit layer has two classes. <code>MatchingServiceTests</code> (33 tests) exercises every method of <code>MatchingService</code> in isolation &mdash; every state transition, every failure path, every edge case. <code>StudentControllerTests</code> (14 tests) verifies the controller independently: correct redirects, correct TempData messages, and ownership guards that prevent a student from editing another student's proposal even by manipulating the route ID.</p>
+    <p class="script">We used xUnit's <code>[Theory]</code> and <code>[InlineData]</code> for parameterised tests. For example, a single test body verifies that both <code>Matched</code> and <code>Withdrawn</code> proposals are unavailable for matching &mdash; without duplicating the test code. Our assertion strategy is deliberate: we assert both the return value and the database state independently, so a method that returns success but forgets to call <code>SaveChangesAsync</code> will be caught.</p>
+    <div class="transition">[Hand over] "[NAME 7] will cover the integration, mock, and functional test layers."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 7 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 7 &mdash; [NAME]</span>
+    <span class="member-role">Integration, Mock &amp; Functional Tests</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>BlindMatchPAS.Tests/Integration/DatabaseIntegrationTests.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Integration/ProposalRepositoryTests.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Mocks/SupervisorControllerMockTests.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS.Tests/Functional/BlindMatchUserJourneyTests.cs</code>
+    </div>
+    <div class="cue">[SLIDE: 4-layer test table showing class names and counts]</div>
+    <p class="script">Thank you, [NAME 6]. Moving to the deeper layers.</p>
+    <p class="script">The <strong>integration layer</strong> has 22 tests across two files. <code>DatabaseIntegrationTests</code> validates multi-step workflows end-to-end through the service and into the database. <code>ProposalRepositoryTests</code> goes even deeper: it tests proposal CRUD, status-transition queries, cascade delete behaviour, expertise-area filtering, and the anonymity invariant. One of the most important tests there asserts that a supervisor query returns <code>null</code> for the student navigation property &mdash; confirming the anonymity guarantee at the persistence level.</p>
+    <p class="script">The <strong>mock layer</strong> has 14 tests in <code>SupervisorControllerMockTests</code>. These use Moq to substitute the real service with a programmable mock, which lets us assert things that state-based tests cannot: for example, that confirming a match <em>never</em> calls <code>ExpressInterestAsync</code>. That is a negative-behaviour assertion &mdash; it guards against accidental side effects, not just correct outcomes. We also built a <code>MockUserManagerHelper</code> to wrap ASP.NET Core's twelve-parameter <code>UserManager</code> constructor, reducing per-test boilerplate from 25 lines to one.</p>
+    <p class="script">The <strong>functional layer</strong> has 7 journey tests in <code>BlindMatchUserJourneyTests</code>. These simulate full end-to-end scenarios through the service layer: the happy path from submission to reveal, two supervisors competing for the same proposal, student withdrawal blocks, supervisor withdrawal and re-availability, admin reassignment, the anonymity guard, and Module Leader oversight. One of these journeys uncovered a real bug: the EF Core identity cache was supplying a navigation property from the change tracker rather than the query &mdash; breaking the anonymity assertion. Fixing it required querying through a fresh context. [NAME 8] will explain that challenge alongside the others.</p>
+    <div class="transition">[Hand over] "[NAME 8] will close with our critical evaluation, the technical challenges we faced, and the conclusion."</div>
+  </div>
+</div>
+
+<!-- ══════════════════ MEMBER 8 ══════════════════ -->
+<div class="speaker-block">
+  <div class="speaker-header">
+    <span class="member-id">Member 8 &mdash; [NAME]</span>
+    <span class="member-role">Critical Evaluation, Technical Challenges &amp; Conclusion</span>
+    <span class="timing">~2 min</span>
+  </div>
+  <div class="speaker-body">
+    <div class="files-box">
+      <strong>&#x1F4C2; Your files to commit &amp; push to Git:</strong>
+      <code>BlindMatchPAS/Controllers/AdminController.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Controllers/StudentController.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Controllers/SupervisorController.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Controllers/ModuleLeaderController.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/Controllers/HomeController.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/ViewModels/Admin/AdminViewModels.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/ViewModels/Student/SubmitProposalViewModel.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/ViewModels/Student/ProposalStatusViewModel.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/ViewModels/Supervisor/SupervisorViewModels.cs</code> &nbsp;&bull;&nbsp;
+      <code>BlindMatchPAS/ViewModels/ModuleLeader/ModuleLeaderViewModels.cs</code>
+    </div>
+    <div class="cue">[SLIDE: 4-layer test summary table; then challenge list]</div>
+    <p class="script">Thank you, [NAME 7]. Let me put the test suite in perspective.</p>
+    <p class="script">Across four layers &mdash; 47 unit, 22 integration, 14 mock, 7 functional &mdash; the suite covers all core business rules, every state transition, negative-behaviour contracts, and end-to-end user journeys. Every test runs against an isolated in-memory database seeded fresh in <code>InitializeAsync</code>. The weakness we acknowledge openly is that the EF Core InMemory provider does not enforce relational constraints the way SQL Server does. We mitigate this by validating unique-index declarations through EF Core's metadata API rather than relying on an exception that the in-memory provider would never throw.</p>
+    <p class="script">We encountered five notable technical challenges. The first was EF Core cascade-delete cycles &mdash; resolved by setting <code>DeleteBehavior.Restrict</code> on specific relationships. The second was mocking the twelve-parameter <code>UserManager</code> &mdash; resolved by the reusable <code>MockUserManagerHelper</code> factory. The third was the EF identity-cache bug in the anonymity tests, resolved by querying through a fresh context. The fourth was ensuring <code>[RegularExpression]</code> annotations were present on all relevant fields as required by the rubric. The fifth was a deliberate design decision to retain the <code>Reassigned</code> enum value for future use, even though the current implementation maps reassignment to <code>UnderReview</code> semantically.</p>
+    <p class="script">In conclusion: BlindMatchPAS is a professionally structured, defensively validated system. The blind-match guarantee &mdash; enforced at service, controller, and database levels simultaneously &mdash; is not an interface detail but a verifiable architectural property. Every one of the 10 commits maps to a named sprint deliverable. Every one of the 90 tests is independently reproducible. The system is ready for production deployment with one configuration change.</p>
+    <p class="script">Thank you. We are happy to take questions.</p>
+    <div class="cue">[SLIDE: "Questions? &mdash; GitHub: github.com/Methul25/Software-tools-project"]</div>
+  </div>
+</div>
+
+<!-- ══════════════════ QUICK REFERENCE ══════════════════ -->
+<h2>Quick Reference &mdash; Key Facts for Q&amp;A</h2>
+
+<table class="data">
+  <tr><th>Topic</th><th>Key Detail</th></tr>
+  <tr><td>Framework</td><td>ASP.NET Core 8 MVC, EF Core 8, SQLite (dev) / SQL Server (prod)</td></tr>
+  <tr><td>Identity &amp; RBAC</td><td>ASP.NET Core Identity; 4 roles: Student, Supervisor, ModuleLeader, SystemAdmin</td></tr>
+  <tr><td>Reveal mechanism</td><td><code>IsRevealed</code> bool on <code>ProjectMatch</code>; set only inside <code>ConfirmMatchAsync</code></td></tr>
+  <tr><td>Anonymity layers</td><td>Service (no <code>.Include(Student)</code>) AND Controller (guards before projecting identity)</td></tr>
+  <tr><td>State machine</td><td>Pending &rarr; UnderReview &rarr; Matched; also Withdrawn and Reassigned</td></tr>
+  <tr><td>Transitions gated by</td><td><code>MatchingService</code> only &mdash; no controller writes directly to the DB</td></tr>
+  <tr><td>Test stack</td><td>xUnit.net 2.6, Moq 4.20, FluentAssertions, EF Core InMemory</td></tr>
+  <tr><td>Test total</td><td>90 tests: 47 unit, 22 integration, 14 mock, 7 functional &mdash; 0 failures</td></tr>
+  <tr><td>Test files</td><td>MatchingServiceTests (33), StudentControllerTests (14), DatabaseIntegrationTests (11), ProposalRepositoryTests (11), SupervisorControllerMockTests (14), BlindMatchUserJourneyTests (7)</td></tr>
+  <tr><td>Key test helper</td><td><code>TestDbContextFactory.Create(Guid.NewGuid())</code> &mdash; isolated DB per test</td></tr>
+  <tr><td>MockUserManagerHelper</td><td>Wraps 12-param <code>UserManager</code> constructor into a one-call factory</td></tr>
+  <tr><td>EF InMemory caveat</td><td>Change tracker identity map; solved by fresh context for anonymity assertions</td></tr>
+  <tr><td>Commit convention</td><td>Conventional Commits 1.0.0 &mdash; <code>type(scope): description</code></td></tr>
+  <tr><td>Commits on main</td><td>10 commits: eed6cb9 &rarr; 80eeda5</td></tr>
+  <tr><td>Regex validation</td><td>InstitutionId (<code>^[A-Za-z]{1,3}\d{4,10}$</code>), Department, TechnicalStack</td></tr>
+  <tr><td>GitHub</td><td>github.com/Methul25/Software-tools-project, branch: main</td></tr>
+  <tr><td>Default admin login</td><td>admin@blindmatch.ac.lk / Admin@12345</td></tr>
+  <tr><td>Default ML login</td><td>moduleleader@blindmatch.ac.lk / Leader@12345</td></tr>
+</table>
+
+<div class="note">
+  <strong>Timing reminder:</strong> Total target is 16 minutes. If running long, Members 6 and 7 can merge at the expense of one live code snippet. If running short, Member 4 (Demo) can add the Module Leader &ldquo;Create User&rdquo; flow (~30 seconds).
+</div>
+
+<div class="page-footer">
+  BlindMatchPAS &mdash; PUSL2020 Presentation Script &mdash; April 2026
+</div>
+
+</body>
+</html>
