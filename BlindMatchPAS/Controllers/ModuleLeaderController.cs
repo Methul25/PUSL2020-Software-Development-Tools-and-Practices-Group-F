@@ -206,9 +206,14 @@ namespace BlindMatchPAS.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateUser()
+        public async Task<IActionResult> CreateUser()
         {
             var vm = new CreateUserViewModel { Roles = GetRoleSelectList() };
+            ViewBag.Departments = await _context.ResearchAreas
+                .Where(r => r.IsActive)
+                .OrderBy(r => r.Name)
+                .Select(r => r.Name)
+                .ToListAsync();
             return View(vm);
         }
 
@@ -219,6 +224,11 @@ namespace BlindMatchPAS.Controllers
             if (!ModelState.IsValid)
             {
                 model.Roles = GetRoleSelectList();
+                ViewBag.Departments = await _context.ResearchAreas
+                    .Where(r => r.IsActive)
+                    .OrderBy(r => r.Name)
+                    .Select(r => r.Name)
+                    .ToListAsync();
                 return View(model);
             }
 

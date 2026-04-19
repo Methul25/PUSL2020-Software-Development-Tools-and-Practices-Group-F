@@ -48,8 +48,14 @@
 
             <div class="form-control">
               <label asp-for="Department" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Department</span></label>
-              <input asp-for="Department" class="input input-bordered w-full focus:border-indigo-400 focus:outline-none"
-                     placeholder="e.g. Computer Science" />
+              <select asp-for="Department" class="select select-bordered w-full focus:border-indigo-400 focus:outline-none">
+                <option value="">-- Select department --</option>
+                @foreach (var dept in (ViewBag.Departments as List<string> ?? new List<string>()))
+                {
+                  <option value="@dept" selected="@(Model.Department == dept)">@dept</option>
+                }
+              </select>
+              <span asp-validation-for="Department" class="text-error text-xs mt-1 block"></span>
             </div>
 
             <div class="form-control">
