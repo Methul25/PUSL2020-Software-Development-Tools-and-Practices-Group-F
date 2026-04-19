@@ -65,7 +65,6 @@ namespace BlindMatchPAS.Data
                     Email = "moduleleader@blindmatch.ac.lk",
                     FullName = "Module Leader",
                     FacultyId = "ML001",
-                    Department = "Computer Science",
                     EmailConfirmed = true
                 };
                 var result = await userManager.CreateAsync(leader, "Leader@12345");
